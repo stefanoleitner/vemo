@@ -18,8 +18,7 @@ EMOTION_COLORS = {
 }
 
 PERSONA_COLORS = {
-    "maya": "#6366f1", "derek": "#f59e0b", "travis": "#ef4444",
-    "lucia": "#10b981", "jordan": "#ec4899", "priya": "#06b6d4",
+    "maya": "#6366f1", "derek": "#f59e0b", "lucia": "#10b981",
 }
 
 DEPRESSION_LEVELS = ["No Depression", "Mild-Moderate", "Severe"]
@@ -38,9 +37,7 @@ MEETING_COLORS = {
 
 # Map new employees to existing biometric data keys
 BIOMETRIC_MAP = {
-    "maya": "maya", "derek": "derek", "travis": "travis", "lucia": "lucia",
-    "jordan": "derek",  # anxiety pattern
-    "priya": "maya",    # exhaustion pattern
+    "maya": "maya", "derek": "derek", "lucia": "lucia",
 }
 
 # ---------------------------------------------------------------------------
@@ -80,59 +77,6 @@ EMPLOYEES = {
             {"title": "Customer Discovery", "start": "14:00", "end": "15:00", "type": "external", "participants": ["Enterprise Prospect", "Sales Rep"]},
             {"title": "Sprint Retro", "start": "15:30", "end": "16:30", "type": "planning", "participants": ["Eng Team", "Design"]},
             {"title": "Metrics Review", "start": "17:00", "end": "17:30", "type": "sync", "participants": ["Data Analyst", "Growth Lead"]},
-        ],
-    },
-    "jordan": {
-        "name": "Jordan Torres",
-        "role": "Senior SDR",
-        "team": "Sales Development",
-        "bio": "8-12 cold calls/day plus demos. Constant rejection. Competitive pressure from leaderboard. Skips lunch for pipeline reviews.",
-        "label": "Sales Burnout",
-        "emoji": "🔥",
-        "trigger_meeting": 4,  # Rejection-heavy cold call block triggers
-        "meetings": [
-            {"title": "Sales Standup", "start": "08:00", "end": "08:30", "type": "standup", "participants": ["Sales Team", "VP Sales"]},
-            {"title": "Cold Call Block #1", "start": "09:00", "end": "10:30", "type": "coldcall", "participants": ["Prospect A", "Prospect B", "Prospect C"]},
-            {"title": "Demo: Acme Corp", "start": "11:00", "end": "11:45", "type": "demo", "participants": ["Acme VP Ops", "AE Partner"]},
-            {"title": "Pipeline Review", "start": "12:00", "end": "12:30", "type": "review", "participants": ["Sales Manager", "RevOps"]},
-            {"title": "Cold Call Block #2", "start": "13:30", "end": "15:00", "type": "coldcall", "participants": ["Prospect D", "Prospect E", "Prospect F", "Prospect G"]},
-            {"title": "1:1 with Manager", "start": "15:30", "end": "16:00", "type": "1on1", "participants": ["Sales Manager"]},
-            {"title": "Deal Strategy", "start": "16:30", "end": "17:00", "type": "planning", "participants": ["AE", "Solutions Eng"]},
-        ],
-    },
-    "travis": {
-        "name": "Travis Kim",
-        "role": "Engineering Manager",
-        "team": "Infrastructure",
-        "bio": "New manager. Frustration builds during cross-team conflicts. Skips breaks. Takes on too much.",
-        "label": "New Manager Stress",
-        "emoji": "❤️",
-        "trigger_meeting": 4,  # Cross-team alignment triggers
-        "meetings": [
-            {"title": "Eng Leads Sync", "start": "08:30", "end": "09:00", "type": "sync", "participants": ["Other Eng Managers", "VP Eng"]},
-            {"title": "Incident Postmortem", "start": "09:30", "end": "10:30", "type": "review", "participants": ["SRE Team", "On-call Eng", "VP Eng"]},
-            {"title": "1:1 with Report", "start": "11:00", "end": "11:30", "type": "1on1", "participants": ["Junior Engineer"]},
-            {"title": "1:1 with Report", "start": "11:30", "end": "12:00", "type": "1on1", "participants": ["Senior Engineer"]},
-            {"title": "Cross-team Alignment", "start": "13:30", "end": "14:30", "type": "planning", "participants": ["Product", "Design", "QA", "Infra"]},
-            {"title": "Hiring Debrief", "start": "15:00", "end": "15:30", "type": "review", "participants": ["Recruiter", "Interview Panel"]},
-            {"title": "All-Hands", "start": "16:00", "end": "17:00", "type": "allhands", "participants": ["Entire Company"]},
-        ],
-    },
-    "priya": {
-        "name": "Priya Mehta",
-        "role": "Global Ops Lead",
-        "team": "Operations",
-        "bio": "Manages teams across US, EU, and APAC. First call at 7am, last at 10pm. Chronic exhaustion. Never truly off.",
-        "label": "Timezone Burnout",
-        "emoji": "🌏",
-        "trigger_meeting": 5,  # Late evening call triggers
-        "meetings": [
-            {"title": "APAC Handoff", "start": "07:00", "end": "07:45", "type": "sync", "participants": ["Singapore Team", "Tokyo Lead"]},
-            {"title": "Global Standup", "start": "09:00", "end": "09:30", "type": "standup", "participants": ["All Regions", "COO"]},
-            {"title": "Vendor Negotiation", "start": "10:30", "end": "11:30", "type": "external", "participants": ["Vendor CEO", "Legal", "Finance"]},
-            {"title": "1:1 with COO", "start": "13:00", "end": "13:30", "type": "1on1", "participants": ["COO"]},
-            {"title": "EU Ops Review", "start": "15:00", "end": "16:00", "type": "review", "participants": ["London Team", "Berlin Lead"]},
-            {"title": "APAC Planning", "start": "21:00", "end": "22:00", "type": "latenight", "participants": ["Singapore PM", "India Ops"]},
         ],
     },
     "lucia": {
@@ -178,25 +122,6 @@ def get_meeting_emotions(employee_key, meeting_idx):
             "1on1": {"fearful": 0.35, "neutral": 0.18, "sad": 0.12, "angry": 0.10, "other": 0.08, "happy": 0.04, "surprised": 0.04, "disgusted": 0.04, "unknown": 0.03},
             "_default": {"neutral": 0.25, "fearful": 0.22, "happy": 0.10, "other": 0.12, "angry": 0.08, "sad": 0.06, "surprised": 0.06, "disgusted": 0.04, "unknown": 0.05},
         },
-        "jordan": {
-            "coldcall": {"fearful": 0.30, "angry": 0.22, "sad": 0.15, "neutral": 0.10, "disgusted": 0.06, "other": 0.06, "happy": 0.03, "surprised": 0.04, "unknown": 0.02},
-            "demo": {"happy": 0.25, "fearful": 0.20, "neutral": 0.18, "surprised": 0.10, "angry": 0.06, "other": 0.08, "sad": 0.04, "disgusted": 0.03, "unknown": 0.04},
-            "review": {"fearful": 0.35, "angry": 0.18, "sad": 0.12, "neutral": 0.10, "disgusted": 0.06, "other": 0.06, "happy": 0.04, "surprised": 0.04, "unknown": 0.03},
-            "1on1": {"sad": 0.28, "fearful": 0.22, "neutral": 0.18, "angry": 0.08, "happy": 0.06, "other": 0.06, "disgusted": 0.04, "surprised": 0.04, "unknown": 0.02},
-            "_default": {"neutral": 0.22, "fearful": 0.20, "angry": 0.15, "happy": 0.10, "other": 0.10, "sad": 0.08, "surprised": 0.05, "disgusted": 0.04, "unknown": 0.04},
-        },
-        "travis": {
-            "review": {"angry": 0.45, "disgusted": 0.12, "fearful": 0.10, "neutral": 0.10, "sad": 0.06, "other": 0.06, "happy": 0.03, "surprised": 0.04, "unknown": 0.02},
-            "planning": {"angry": 0.45, "disgusted": 0.12, "fearful": 0.10, "neutral": 0.10, "sad": 0.06, "other": 0.06, "happy": 0.03, "surprised": 0.04, "unknown": 0.02},
-            "1on1": {"neutral": 0.28, "angry": 0.18, "happy": 0.14, "other": 0.10, "fearful": 0.08, "sad": 0.06, "disgusted": 0.04, "surprised": 0.06, "unknown": 0.04},
-            "_default": {"angry": 0.25, "neutral": 0.22, "fearful": 0.12, "other": 0.10, "disgusted": 0.08, "sad": 0.06, "happy": 0.06, "surprised": 0.05, "unknown": 0.04},
-        },
-        "priya": {
-            "latenight": {"sad": 0.38, "fearful": 0.18, "neutral": 0.14, "angry": 0.10, "disgusted": 0.06, "other": 0.05, "happy": 0.02, "surprised": 0.03, "unknown": 0.02},
-            "external": {"fearful": 0.28, "neutral": 0.22, "angry": 0.12, "sad": 0.10, "happy": 0.08, "other": 0.08, "surprised": 0.04, "disgusted": 0.04, "unknown": 0.02},
-            "1on1": {"neutral": 0.25, "sad": 0.20, "fearful": 0.15, "happy": 0.10, "other": 0.10, "angry": 0.06, "disgusted": 0.04, "surprised": 0.04, "unknown": 0.04},
-            "_default": {"neutral": 0.28, "sad": 0.18, "happy": 0.15, "fearful": 0.10, "other": 0.10, "angry": 0.06, "disgusted": 0.03, "surprised": 0.05, "unknown": 0.03},
-        },
         "lucia": {
             "external": {"happy": 0.38, "neutral": 0.25, "surprised": 0.08, "other": 0.08, "fearful": 0.05, "sad": 0.04, "angry": 0.03, "disgusted": 0.02, "unknown": 0.04},
             "_default": {"happy": 0.45, "neutral": 0.22, "surprised": 0.08, "other": 0.06, "sad": 0.04, "fearful": 0.04, "angry": 0.02, "disgusted": 0.02, "unknown": 0.04},
@@ -217,9 +142,6 @@ def get_meeting_clinical(employee_key, meeting_idx):
     clinicals = {
         "maya": {"external": {"depression": 2, "anxiety": 2}, "1on1": {"depression": 2, "anxiety": 1}, "_default": {"depression": 1, "anxiety": 1}},
         "derek": {"review": {"depression": 0, "anxiety": 3}, "external": {"depression": 0, "anxiety": 2}, "1on1": {"depression": 0, "anxiety": 2}, "_default": {"depression": 0, "anxiety": 1}},
-        "jordan": {"coldcall": {"depression": 1, "anxiety": 3}, "review": {"depression": 1, "anxiety": 2}, "1on1": {"depression": 1, "anxiety": 1}, "_default": {"depression": 0, "anxiety": 2}},
-        "travis": {"review": {"depression": 1, "anxiety": 2}, "planning": {"depression": 1, "anxiety": 2}, "_default": {"depression": 0, "anxiety": 1}},
-        "priya": {"latenight": {"depression": 2, "anxiety": 2}, "external": {"depression": 1, "anxiety": 1}, "_default": {"depression": 1, "anxiety": 0}},
         "lucia": {"_default": {"depression": 0, "anxiety": 0}},
     }
     emp_clinicals = clinicals.get(employee_key, {"_default": {"depression": 0, "anxiety": 0}})
@@ -237,9 +159,6 @@ def get_week_daily_scores(employee_key):
         profiles = {
             "maya":   (0.3 + day_idx * 0.08, max(0.05, 0.25 - day_idx * 0.04)),
             "derek":  (0.35 + (0.15 if day_idx in (1, 3) else 0), 0.12),
-            "jordan": (0.4 + day_idx * 0.06, max(0.03, 0.15 - day_idx * 0.03)),
-            "travis": (0.25 + (0.2 if day_idx == 2 else 0.05 * day_idx), 0.1),
-            "priya":  (0.35 + day_idx * 0.05, max(0.08, 0.20 - day_idx * 0.03)),
             "lucia":  (0.1, 0.45),
         }
         base_stress, base_happy = profiles.get(employee_key, (0.2, 0.3))
@@ -255,12 +174,61 @@ def get_week_daily_scores(employee_key):
     return days
 
 # ---------------------------------------------------------------------------
+# Monthly trend data (6 months)
+# ---------------------------------------------------------------------------
+MONTHS = ["Oct", "Nov", "Dec", "Jan", "Feb", "Mar"]
+
+def get_monthly_trends(employee_key):
+    random.seed(hash(f"{employee_key}_monthly_v1"))
+    trajectories = {
+        "maya": {
+            "stress": [0.25, 0.30, 0.38, 0.48, 0.55, 0.62],
+            "recovery": [72, 65, 55, 42, 35, 28],
+            "meeting_hours": [4.2, 4.5, 5.0, 5.5, 5.8, 6.2],
+            "mood": [0.65, 0.55, 0.42, 0.30, 0.22, 0.18],
+        },
+        "derek": {
+            "stress": [0.30, 0.42, 0.35, 0.50, 0.58, 0.65],
+            "recovery": [68, 55, 62, 48, 40, 35],
+            "meeting_hours": [5.0, 5.5, 5.2, 6.0, 6.5, 7.0],
+            "mood": [0.50, 0.38, 0.45, 0.30, 0.25, 0.18],
+        },
+        "lucia": {
+            "stress": [0.15, 0.12, 0.18, 0.14, 0.10, 0.12],
+            "recovery": [78, 82, 75, 80, 85, 82],
+            "meeting_hours": [3.5, 3.8, 3.5, 3.2, 3.5, 3.0],
+            "mood": [0.72, 0.75, 0.68, 0.78, 0.80, 0.82],
+        },
+    }
+    t = trajectories.get(employee_key, trajectories["lucia"])
+    data = []
+    for i, month in enumerate(MONTHS):
+        data.append({
+            "month": month,
+            "stress": min(1, max(0, t["stress"][i] + random.uniform(-0.03, 0.03))),
+            "recovery": max(10, min(100, t["recovery"][i] + random.randint(-3, 3))),
+            "meeting_hours": max(1, t["meeting_hours"][i] + random.uniform(-0.2, 0.2)),
+            "mood": min(1, max(0, t["mood"][i] + random.uniform(-0.03, 0.03))),
+        })
+    return data
+
+# ---------------------------------------------------------------------------
 # Data loading
 # ---------------------------------------------------------------------------
 @st.cache_data
 def load_persona_data():
     with open(os.path.join(os.path.dirname(__file__), "persona_data.json")) as f:
         return json.load(f)
+
+@st.cache_data
+def load_skills():
+    skills_dir = os.path.join(os.path.dirname(__file__), "skills")
+    skills = {}
+    for f in sorted(os.listdir(skills_dir)):
+        if f.endswith(".md"):
+            with open(os.path.join(skills_dir, f)) as fh:
+                skills[f.replace(".md", "")] = fh.read()
+    return skills
 
 def time_to_minutes(t):
     h, m = t.split(":")
@@ -379,6 +347,120 @@ HR: {biometric_at_worst['heart_rate_bpm']:.0f} bpm | HRV: {biometric_at_worst['h
 **WEEKLY TREND:** One observation about the pattern this week and what Vemo is doing about it.
 
 Reference actual meeting names. Be specific, not generic."""
+
+# ---------------------------------------------------------------------------
+# Intervention system — skills, voice input, interactive trigger
+# ---------------------------------------------------------------------------
+SKILL_ICONS = {
+    "stress-resilience": "🧘", "recovery-coach": "💚", "sleep-analyst": "😴",
+    "heart-health-scorecard": "❤️", "inflammation-tracker": "🔬",
+    "longevity-protocol": "🧬", "morning-briefing": "🌅",
+}
+SKILL_LABELS = {
+    "stress-resilience": "Stress Resilience", "recovery-coach": "Recovery Coach",
+    "sleep-analyst": "Sleep Analyst", "heart-health-scorecard": "Heart Health",
+    "inflammation-tracker": "Inflammation Tracker", "longevity-protocol": "Longevity Protocol",
+    "morning-briefing": "Morning Briefing",
+}
+
+VOICE_SUGGESTIONS = {
+    "maya": [
+        "I'm exhausted. Back to back meetings all day and I can't get any actual coding done. That client call was really intense and I feel completely drained.",
+        "I feel like I'm drowning. Every meeting adds more tasks but I never get time to do the actual work. My head is pounding.",
+    ],
+    "derek": [
+        "That stakeholder review was brutal. I feel like I'm being pulled in ten directions and nothing I present is good enough. My heart was racing the whole time.",
+        "I'm so anxious about the board metrics. I keep switching between projects and I can't think deeply about anything anymore.",
+    ],
+    "lucia": [
+        "I'm actually feeling pretty good today. The team is performing well and I managed to take my walking breaks between meetings.",
+    ],
+}
+
+def select_skills(employee_key, emotions, clinical, biometric_snap, skills_dict):
+    """Select 2-4 relevant skills based on trigger context."""
+    selected = []
+    top_emo = max(emotions, key=emotions.get)
+
+    if top_emo in ("angry", "fearful", "sad", "disgusted"):
+        selected.append("stress-resilience")
+
+    hr = biometric_snap.get("heart_rate_bpm", 70)
+    hrv = biometric_snap.get("hrv_rmssd_ms", 50)
+    if hr > 80 or hrv < 40:
+        selected.append("heart-health-scorecard")
+
+    if clinical.get("depression", 0) >= 1 or clinical.get("anxiety", 0) >= 2:
+        selected.append("recovery-coach")
+
+    if clinical.get("anxiety", 0) >= 2 or clinical.get("depression", 0) >= 2:
+        selected.append("inflammation-tracker")
+
+    selected.append("sleep-analyst")
+
+    if clinical.get("depression", 0) >= 2 and clinical.get("anxiety", 0) >= 2:
+        selected.append("longevity-protocol")
+
+    seen = set()
+    unique = []
+    for s in selected:
+        if s not in seen and s in skills_dict:
+            seen.add(s)
+            unique.append(s)
+    return unique[:4]
+
+def build_intervention_prompt(employee, meeting, emotions, clinical, whoop_snap, voice_input, skills_text):
+    top = max(emotions, key=emotions.get)
+    dep_label = DEPRESSION_LEVELS[min(clinical.get("depression", 0), 2)]
+    anx_label = ANXIETY_LEVELS[min(clinical.get("anxiety", 0), 3)]
+    first_name = employee['name'].split()[0]
+
+    return f"""You are Vemo, a workplace wellbeing AI agent. You detected concerning emotional patterns in a meeting recording. The employee has just spoken to you about how they're feeling.
+
+You are AGENTIC. You don't just advise — you take actions. You have access to the employee's calendar, wellness tools, and notification system.
+
+## Employee
+{employee['name']}, {employee['role']} on {employee['team']} team
+{employee['bio']}
+
+## Meeting Just Analyzed
+{meeting['title']} ({meeting['start']}–{meeting['end']})
+Type: {meeting['type']}
+Participants: {', '.join(meeting['participants'])}
+
+## Voice Biomarkers (emotion2vec+ large)
+{json.dumps(emotions, indent=2)}
+Dominant: {top} ({emotions[top]:.0%})
+
+## Clinical Screening (Kintsugi DAM 3.1)
+Depression: {dep_label} | Anxiety: {anx_label}
+
+## Biometrics During Meeting
+HR: {whoop_snap['heart_rate_bpm']:.0f} bpm | HRV: {whoop_snap['hrv_rmssd_ms']:.0f} ms | Resp: {whoop_snap['respiratory_rate_brpm']:.1f}
+
+## Voice Sample Analysis
+You just analyzed a live voice sample from {first_name}. The emotion and clinical results above were extracted from their voice patterns.
+
+## Your Skill Protocols (USE THESE — reference them by name)
+{skills_text}
+
+## Response Format — Be SPECIFIC, WARM, and AGENTIC:
+
+**HEY {first_name.upper()}, I NEED TO FLAG SOMETHING.** 2 sentences about what the voice analysis revealed. Be direct but warm — name what the models detected and why it matters.
+
+**WHAT YOUR BODY IS TELLING ME:** 2 sentences connecting the voice biomarkers + wearable biometrics. Make the data human — e.g., "Your voice carried 40% fearful markers while your heart rate hit 95 and HRV dropped to 28 — your body was in fight-or-flight the entire call."
+
+**ACTIVATING NOW:**
+- [Specific action from a named skill protocol — e.g., "Per **Stress Resilience Protocol**: Starting 4-7-8 breathing — inhale 4s, hold 7s, exhale 8s, 3 cycles"]
+- [Calendar action — e.g., "Blocking your next 30 minutes as recovery time"]
+- [Another skill-based action — e.g., "Per **Recovery Coach**: Lowering your strain target from 14 to 8 for today"]
+
+**TONIGHT — YOUR RECOVERY PROTOCOL:**
+- [2 specific recovery actions drawn from the skills, personalized to their situation]
+
+**PATTERN WATCH:** One sentence about what Vemo will monitor going forward this week.
+
+Be direct, warm, and human. You're talking to someone whose voice just revealed distress. Name the skill protocols you're using. Reference specific numbers from the biomarkers."""
 
 # ---------------------------------------------------------------------------
 # Charts
@@ -508,6 +590,29 @@ def make_week_chart(week_data, employee_key):
     )
     return fig
 
+def make_monthly_chart(monthly_data):
+    months = [d["month"] for d in monthly_data]
+    stress = [d["stress"] for d in monthly_data]
+    mood = [d["mood"] for d in monthly_data]
+    recovery = [d["recovery"] / 100 for d in monthly_data]
+
+    fig = go.Figure()
+    fig.add_trace(go.Scatter(x=months, y=stress, name="Stress", line=dict(color="#ef4444", width=3),
+                             fill="tozeroy", fillcolor="rgba(239,68,68,0.08)", mode="lines+markers"))
+    fig.add_trace(go.Scatter(x=months, y=mood, name="Mood", line=dict(color="#10b981", width=3),
+                             fill="tozeroy", fillcolor="rgba(16,185,129,0.08)", mode="lines+markers"))
+    fig.add_trace(go.Scatter(x=months, y=recovery, name="Recovery", line=dict(color="#6366f1", width=2.5),
+                             mode="lines+markers"))
+    fig.update_layout(
+        height=300, margin=dict(l=0, r=0, t=20, b=0),
+        plot_bgcolor="#0f172a", paper_bgcolor="#0f172a",
+        font=dict(color="#94a3b8", size=11),
+        legend=dict(orientation="h", yanchor="bottom", y=1.02),
+        yaxis=dict(range=[0, 1], tickformat=".0%", gridcolor="#1e293b"),
+        xaxis=dict(gridcolor="#1e293b"),
+    )
+    return fig
+
 # ===========================================================================
 # PAGE CONFIG + STYLES
 # ===========================================================================
@@ -561,6 +666,26 @@ st.markdown("""
     }
     .vemo-dot { width: 8px; height: 8px; border-radius: 50%; background: #10b981; animation: pulse 1.5s infinite; }
     div[data-testid="stHorizontalBlock"] > div { min-width: 0; }
+    @keyframes mic-pulse { 0%, 100% { box-shadow: 0 0 0 0 rgba(99,102,241,0.5); } 50% { box-shadow: 0 0 30px 15px rgba(99,102,241,0.15); } }
+    .mic-circle {
+        width: 80px; height: 80px; border-radius: 50%; background: linear-gradient(135deg, #4f46e5, #6366f1);
+        display: inline-flex; align-items: center; justify-content: center; font-size: 2rem;
+        animation: mic-pulse 2s ease-in-out infinite; margin: 16px auto;
+    }
+    .voice-area {
+        background: linear-gradient(135deg, #1e1b4b 0%, #0f172a 100%);
+        border: 2px solid #6366f1; border-radius: 16px; padding: 28px 32px; text-align: center;
+    }
+    .voice-transcript {
+        background: #0f172a; border: 1px solid #334155; border-radius: 12px;
+        padding: 16px 20px; margin: 12px 0; text-align: left;
+        font-style: italic; color: #cbd5e1; font-size: 0.95rem; line-height: 1.6;
+    }
+    .skill-pill {
+        display: inline-flex; align-items: center; gap: 6px;
+        background: #10b98115; border: 1px solid #10b981; border-radius: 20px;
+        padding: 6px 14px; font-size: 0.75rem; color: #10b981; font-weight: 600; margin: 4px;
+    }
 </style>
 """, unsafe_allow_html=True)
 
@@ -571,12 +696,14 @@ defaults = {
     "screen": "select", "employee": None, "selected_meeting": None,
     "view_mode": "day", "playing": False, "play_minutes": 7 * 60,
     "triggered": False, "agent_done": False,
+    "intervention_step": "alert", "voice_input": "",
 }
 for k, v in defaults.items():
     if k not in st.session_state:
         st.session_state[k] = v
 
 all_data = load_persona_data()
+all_skills = load_skills()
 
 def go_to(screen):
     st.session_state.screen = screen
@@ -629,6 +756,8 @@ if st.session_state.screen == "select":
                     st.session_state.play_minutes = 7 * 60
                     st.session_state.triggered = False
                     st.session_state.agent_done = False
+                    st.session_state.intervention_step = "alert"
+                    st.session_state.voice_input = ""
                     go_to("day")
                     st.rerun()
         st.markdown("")
@@ -666,12 +795,64 @@ elif st.session_state.screen == "day":
     # View toggle
     col_view, col_play, col_speed = st.columns([2, 1, 1])
     with col_view:
-        view = st.segmented_control("View", ["Day", "Week"], default="Day" if st.session_state.view_mode == "day" else "Week", label_visibility="collapsed")
+        view_options = ["Day", "Week", "Trends"]
+        current_default = {"day": "Day", "week": "Week", "trends": "Trends"}.get(st.session_state.view_mode, "Day")
+        view = st.segmented_control("View", view_options, default=current_default, label_visibility="collapsed")
         if view:
             st.session_state.view_mode = view.lower()
 
+    # ---- TRENDS VIEW ----
+    if st.session_state.view_mode == "trends":
+        monthly = get_monthly_trends(emp_key)
+        st.markdown("### 6-Month Trajectory")
+        fig_monthly = make_monthly_chart(monthly)
+        st.plotly_chart(fig_monthly, use_container_width=True)
+
+        # Monthly cards
+        month_cols = st.columns(6)
+        for i, md in enumerate(monthly):
+            with month_cols[i]:
+                stress_color = "#ef4444" if md["stress"] > 0.5 else "#f59e0b" if md["stress"] > 0.3 else "#10b981"
+                rec_color = "#ef4444" if md["recovery"] < 34 else "#f59e0b" if md["recovery"] < 67 else "#10b981"
+                is_current = (i == len(monthly) - 1)
+                border = "border: 2px solid #6366f1;" if is_current else "border: 1px solid #1e293b;"
+                st.markdown(f"""
+                <div style="background: #1e293b; border-radius: 10px; padding: 12px; text-align: center; {border}">
+                    <div style="font-size: 0.8rem; font-weight: 600; color: #e2e8f0;">{md['month']}{'  ← now' if is_current else ''}</div>
+                    <div style="font-size: 1.2rem; font-weight: 700; color: {stress_color}; margin: 4px 0;">{md['stress']:.0%}</div>
+                    <div style="font-size: 0.6rem; color: #64748b;">STRESS</div>
+                    <div style="font-size: 0.85rem; color: {rec_color}; margin-top: 4px;">{md['recovery']}%</div>
+                    <div style="font-size: 0.6rem; color: #64748b;">RECOVERY</div>
+                    <div style="font-size: 0.75rem; color: #94a3b8; margin-top: 4px;">{md['meeting_hours']:.1f}h/day</div>
+                </div>
+                """, unsafe_allow_html=True)
+
+        # Trajectory insight
+        first_stress = monthly[0]["stress"]
+        last_stress = monthly[-1]["stress"]
+        delta = last_stress - first_stress
+        if delta > 0.15:
+            trajectory = "DECLINING"
+            traj_color = "#ef4444"
+            traj_msg = f"Stress has increased {delta:.0%} over 6 months. Meeting hours up from {monthly[0]['meeting_hours']:.1f}h to {monthly[-1]['meeting_hours']:.1f}h/day. Recovery trending down. Intervention recommended."
+        elif delta < -0.05:
+            trajectory = "IMPROVING"
+            traj_color = "#10b981"
+            traj_msg = f"Positive trajectory. Stress down {abs(delta):.0%} over 6 months. Recovery stable at {monthly[-1]['recovery']}%. Healthy patterns sustained."
+        else:
+            trajectory = "STABLE"
+            traj_color = "#6366f1"
+            traj_msg = f"Metrics holding steady. Stress at {last_stress:.0%}, recovery at {monthly[-1]['recovery']}%. Continue monitoring."
+
+        st.markdown(f"""
+        <div style="background: {traj_color}10; border: 1px solid {traj_color}; border-radius: 12px; padding: 16px 20px; margin-top: 16px;">
+            <span style="font-size: 0.7rem; font-weight: 700; color: {traj_color}; letter-spacing: 0.1em;">TRAJECTORY: {trajectory}</span>
+            <div style="font-size: 0.9rem; color: #cbd5e1; margin-top: 6px; line-height: 1.5;">{traj_msg}</div>
+        </div>
+        """, unsafe_allow_html=True)
+
     # ---- WEEK VIEW ----
-    if st.session_state.view_mode == "week":
+    elif st.session_state.view_mode == "week":
         week_data = get_week_daily_scores(emp_key)
         fig_week = make_week_chart(week_data, emp_key)
         st.plotly_chart(fig_week, use_container_width=True)
@@ -814,6 +995,7 @@ elif st.session_state.screen == "day":
         if trigger_reached and not st.session_state.triggered:
             st.session_state.playing = False
             st.session_state.triggered = True
+            st.session_state.intervention_step = "alert"
             st.rerun()
 
         if st.session_state.triggered and not st.session_state.agent_done:
@@ -821,7 +1003,11 @@ elif st.session_state.screen == "day":
             emotions = get_meeting_emotions(emp_key, trigger_idx)
             top_emo = max(emotions, key=emotions.get)
             emo_color = EMOTION_COLORS.get(top_emo, "#ef4444")
+            clinical = get_meeting_clinical(emp_key, trigger_idx)
+            mid_min = (time_to_minutes(tm["start"]) + time_to_minutes(tm["end"])) // 2
+            snap = min(hourly_data, key=lambda d: abs(d["minutes_from_midnight"] - mid_min))
 
+            # Always show alert box
             st.markdown("---")
             st.markdown(f"""
             <div class="alert-box">
@@ -834,66 +1020,168 @@ elif st.session_state.screen == "day":
 
             st.markdown("")
 
-            # Agent thinking steps
-            st.markdown("### Vemo Responding...")
-            st.markdown('<div class="scan-bar"></div>', unsafe_allow_html=True)
+            # --- STEP 1: ANIMATED THINKING ---
+            if st.session_state.intervention_step == "alert":
+                st.markdown("### Vemo Analyzing...")
+                st.markdown('<div class="scan-bar"></div>', unsafe_allow_html=True)
 
-            steps = [
-                ("🎙️", "Analyzing voice biomarkers", "emotion2vec+ processing meeting audio..."),
-                ("🧠", "Clinical screening", "Kintsugi DAM evaluating depression/anxiety markers..."),
-                ("📊", "Correlating biometrics", "Cross-referencing HR, HRV, respiratory rate..."),
-                ("⚡", "Selecting intervention", "Matching patterns to skill library..."),
-                ("🚀", "Executing actions", "Deploying personalized intervention..."),
-            ]
+                steps = [
+                    ("🎙️", "Analyzing voice biomarkers", "emotion2vec+ processing meeting audio..."),
+                    ("🧠", "Clinical screening", "Kintsugi DAM evaluating depression/anxiety markers..."),
+                    ("📊", "Correlating biometrics", "Cross-referencing HR, HRV, respiratory rate..."),
+                    ("📚", "Loading skill protocols", "Matching patterns to intervention library..."),
+                    ("👂", "Opening voice channel", "Ready to listen..."),
+                ]
 
-            step_placeholder = st.empty()
-            for j, (icon, title, desc) in enumerate(steps):
-                with step_placeholder.container():
-                    for k in range(j + 1):
-                        cls = "agent-step done" if k < j else "agent-step active"
-                        si, st_title, sd = steps[k]
-                        check = "✓" if k < j else "..."
-                        st.markdown(f'<div class="{cls}"><strong>{si} {st_title}</strong> {check}<div style="font-size:0.8rem;color:#64748b;">{sd}</div></div>', unsafe_allow_html=True)
-                time.sleep(0.6)
+                step_placeholder = st.empty()
+                for j, (icon, title, desc) in enumerate(steps):
+                    with step_placeholder.container():
+                        for k in range(j + 1):
+                            cls = "agent-step done" if k < j else "agent-step active"
+                            si, st_title, sd = steps[k]
+                            check = "✓" if k < j else "..."
+                            st.markdown(f'<div class="{cls}"><strong>{si} {st_title}</strong> {check}<div style="font-size:0.8rem;color:#64748b;">{sd}</div></div>', unsafe_allow_html=True)
+                    time.sleep(0.5)
 
-            # Now stream the agent response
-            st.markdown("---")
-            st.markdown('<div class="vemo-active" style="margin-bottom:12px;"><span class="vemo-dot"></span> VEMO INTERVENING</div>', unsafe_allow_html=True)
+                st.session_state.intervention_step = "listening"
+                st.rerun()
 
-            clinical = get_meeting_clinical(emp_key, trigger_idx)
-            mid_min = (time_to_minutes(tm["start"]) + time_to_minutes(tm["end"])) // 2
-            snap = min(hourly_data, key=lambda d: abs(d["minutes_from_midnight"] - mid_min))
-            system_prompt = build_meeting_system_prompt(emp, tm, emotions, clinical, snap)
+            # --- STEP 2: VOICE INPUT (record or upload) ---
+            elif st.session_state.intervention_step == "listening":
+                st.markdown(f"""
+                <div class="voice-area">
+                    <div class="mic-circle">🎙️</div>
+                    <div style="font-size: 1.2rem; font-weight: 600; color: #e2e8f0; margin-bottom: 4px;">Vemo needs a voice check-in</div>
+                    <div style="font-size: 0.85rem; color: #94a3b8;">{emp['name'].split()[0]}, record a quick voice sample or upload a pre-saved one.</div>
+                </div>
+                """, unsafe_allow_html=True)
 
-            api_key = os.environ.get("ANTHROPIC_AUTH_TOKEN") or os.environ.get("ANTHROPIC_API_KEY")
-            if api_key:
-                response_placeholder = st.empty()
-                full_response = ""
-                for chunk in stream_agent_response(system_prompt, "Intervene now. What are you doing?"):
-                    full_response += chunk
-                    response_placeholder.markdown(f'<div class="agent-card">\n\n{full_response}\n\n</div>', unsafe_allow_html=True)
-
-                # Action buttons
                 st.markdown("")
-                st.markdown("### Quick Actions")
-                a1, a2, a3, a4 = st.columns(4)
-                with a1:
-                    if st.button("🧘 Start Breathing", use_container_width=True, type="primary"):
-                        st.toast("4-7-8 breathing protocol started. Follow the rhythm.", icon="🧘")
-                with a2:
-                    if st.button("📅 Block Calendar", use_container_width=True):
-                        st.toast("15-min recovery block added before your next meeting.", icon="📅")
-                with a3:
-                    if st.button("🚶 Walking Break", use_container_width=True):
-                        st.toast("10-min walking break scheduled. Your next meeting will get a 5-min late start notification.", icon="🚶")
-                with a4:
-                    if st.button("📊 Full Analysis", use_container_width=True):
-                        st.session_state.selected_meeting = trigger_idx
-                        st.session_state.agent_done = True
-                        go_to("meeting")
+                rec_col, upload_col = st.columns(2)
+                with rec_col:
+                    st.markdown("**Record live**")
+                    audio_recording = st.audio_input("Record a voice check-in", key="voice_rec")
+                with upload_col:
+                    st.markdown("**Upload audio**")
+                    audio_upload = st.file_uploader("Upload a voice sample", type=["wav", "mp3", "m4a", "ogg", "webm"], key="voice_upload", label_visibility="collapsed")
+
+                has_audio = audio_recording is not None or audio_upload is not None
+
+                if has_audio:
+                    st.markdown("")
+                    if st.button("🔬 Analyze Voice Sample", type="primary", use_container_width=True, key="analyze_voice"):
+                        st.session_state.voice_input = "(voice sample provided)"
+                        st.session_state.intervention_step = "processing"
                         st.rerun()
 
-                st.session_state.agent_done = True
+            # --- STEP 2b: PROCESSING THROUGH MODELS ---
+            elif st.session_state.intervention_step == "processing":
+                st.markdown("### Processing Voice Sample...")
+                st.markdown('<div class="scan-bar"></div>', unsafe_allow_html=True)
+
+                model_steps = [
+                    ("🎙️", "emotion2vec+ large", "9-class speech emotion recognition running..."),
+                    ("🧠", "Kintsugi DAM 3.1", "PHQ-9 depression & GAD-7 anxiety screening..."),
+                    ("📊", "Biometric correlation", "Cross-referencing Whoop HR, HRV, respiratory rate..."),
+                    ("📚", "Skill protocol matching", "Selecting intervention protocols..."),
+                ]
+
+                model_placeholder = st.empty()
+                for j, (icon, title, desc) in enumerate(model_steps):
+                    with model_placeholder.container():
+                        for k in range(j + 1):
+                            cls = "agent-step done" if k < j else "agent-step active"
+                            si, st_title, sd = model_steps[k]
+                            check = "✓" if k < j else "..."
+                            st.markdown(f'<div class="{cls}"><strong>{si} {st_title}</strong> {check}<div style="font-size:0.8rem;color:#64748b;">{sd}</div></div>', unsafe_allow_html=True)
+                    time.sleep(0.6)
+
+                st.session_state.intervention_step = "responding"
+                st.rerun()
+
+            # --- STEP 3: RESULTS + SKILL SELECTION + AGENT RESPONSE ---
+            elif st.session_state.intervention_step == "responding":
+                # Show voice analysis results
+                dep_label = DEPRESSION_LEVELS[min(clinical.get("depression", 0), 2)]
+                anx_label = ANXIETY_LEVELS[min(clinical.get("anxiety", 0), 3)]
+
+                res_col1, res_col2, res_col3 = st.columns(3)
+                with res_col1:
+                    st.markdown(f"""
+                    <div style="background:#0f172a;border:1px solid {emo_color};border-radius:10px;padding:12px;text-align:center;">
+                        <div style="font-size:0.65rem;color:#64748b;">EMOTION2VEC+</div>
+                        <div style="font-size:1.3rem;font-weight:700;color:{emo_color};margin:4px 0;">{top_emo.upper()}</div>
+                        <div style="font-size:0.85rem;color:#94a3b8;">{emotions[top_emo]:.0%}</div>
+                    </div>
+                    """, unsafe_allow_html=True)
+                with res_col2:
+                    dep_color = SEVERITY_COLORS[dep_label]
+                    st.markdown(f"""
+                    <div style="background:#0f172a;border:1px solid {dep_color};border-radius:10px;padding:12px;text-align:center;">
+                        <div style="font-size:0.65rem;color:#64748b;">DEPRESSION (PHQ-9)</div>
+                        <div style="font-size:1.1rem;font-weight:700;color:{dep_color};margin:4px 0;">{dep_label}</div>
+                    </div>
+                    """, unsafe_allow_html=True)
+                with res_col3:
+                    anx_color = SEVERITY_COLORS[anx_label]
+                    st.markdown(f"""
+                    <div style="background:#0f172a;border:1px solid {anx_color};border-radius:10px;padding:12px;text-align:center;">
+                        <div style="font-size:0.65rem;color:#64748b;">ANXIETY (GAD-7)</div>
+                        <div style="font-size:1.1rem;font-weight:700;color:{anx_color};margin:4px 0;">{anx_label}</div>
+                    </div>
+                    """, unsafe_allow_html=True)
+
+                st.markdown("")
+
+                # Select and display skills
+                selected_skills = select_skills(emp_key, emotions, clinical, snap, all_skills)
+
+                st.markdown("### Skills Activated")
+                skills_html = "".join(
+                    f'<span class="skill-pill">{SKILL_ICONS.get(s, "📋")} {SKILL_LABELS.get(s, s)}</span>'
+                    for s in selected_skills
+                )
+                st.markdown(f'<div style="margin-bottom: 16px;">{skills_html}</div>', unsafe_allow_html=True)
+
+                # Build skills text for prompt
+                skills_text = "\n\n".join(
+                    f"### {SKILL_LABELS.get(s, s)}\n{all_skills.get(s, '')}" for s in selected_skills
+                )
+
+                # Stream agent response
+                st.markdown("---")
+                st.markdown('<div class="vemo-active" style="margin-bottom:12px;"><span class="vemo-dot"></span> VEMO INTERVENING</div>', unsafe_allow_html=True)
+
+                api_key = os.environ.get("ANTHROPIC_AUTH_TOKEN") or os.environ.get("ANTHROPIC_API_KEY")
+                if api_key:
+                    system_prompt = build_intervention_prompt(emp, tm, emotions, clinical, snap, "", skills_text)
+                    response_placeholder = st.empty()
+                    full_response = ""
+                    for chunk in stream_agent_response(system_prompt, f"You just analyzed a live voice sample from {emp['name'].split()[0]}. Based on the voice biomarkers, clinical screening, and biometrics, intervene now using your skill protocols.", max_tokens=800):
+                        full_response += chunk
+                        response_placeholder.markdown(f'<div class="agent-card">\n\n{full_response}\n\n</div>', unsafe_allow_html=True)
+
+                    # Action buttons
+                    st.markdown("")
+                    st.markdown("### Quick Actions")
+                    a1, a2, a3, a4 = st.columns(4)
+                    with a1:
+                        if st.button("🧘 Start Breathing", use_container_width=True, type="primary"):
+                            st.toast("4-7-8 breathing protocol started. Follow the rhythm.", icon="🧘")
+                    with a2:
+                        if st.button("📅 Block Calendar", use_container_width=True):
+                            st.toast("15-min recovery block added before your next meeting.", icon="📅")
+                    with a3:
+                        if st.button("🚶 Walking Break", use_container_width=True):
+                            st.toast("10-min walking break scheduled. Your next meeting will get a 5-min late start notification.", icon="🚶")
+                    with a4:
+                        if st.button("📊 Full Analysis", use_container_width=True):
+                            st.session_state.selected_meeting = trigger_idx
+                            st.session_state.agent_done = True
+                            go_to("meeting")
+                            st.rerun()
+
+                    st.session_state.agent_done = True
 
         elif st.session_state.triggered and st.session_state.agent_done:
             # Already triggered and handled — show summary nav
@@ -909,6 +1197,8 @@ elif st.session_state.screen == "day":
                     st.session_state.play_minutes = time_to_minutes(meetings[trigger_idx]["end"]) + 30
                     st.session_state.triggered = False
                     st.session_state.agent_done = False
+                    st.session_state.intervention_step = "alert"
+                    st.session_state.voice_input = ""
                     st.rerun()
 
         # Auto-play tick
