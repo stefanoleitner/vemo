@@ -1,0 +1,7 @@
+streamlit
+audio-recorder-streamlit
+anthropic
+plotly
+torch
+torchaudio
+funasr
