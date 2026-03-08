@@ -463,6 +463,208 @@ You just analyzed a live voice sample from {first_name}. The emotion and clinica
 Be direct, warm, and human. You're talking to someone whose voice just revealed distress. Name the skill protocols you're using. Reference specific numbers from the biomarkers."""
 
 # ---------------------------------------------------------------------------
+# Action dialogs (modals)
+# ---------------------------------------------------------------------------
+@st.dialog("🧘 Breathing Exercise", width="large")
+def show_breathing_dialog():
+    import streamlit.components.v1 as components
+    breathing_html = """
+    <div id="breathe-app" style="text-align:center;padding:40px 20px;background:linear-gradient(135deg,#0c1222 0%,#1a1a2e 100%);border-radius:16px;border:1px solid #6366f1;font-family:-apple-system,BlinkMacSystemFont,sans-serif;">
+        <div style="font-size:0.7rem;color:#6366f1;letter-spacing:0.15em;font-weight:700;margin-bottom:6px;">STRESS RESILIENCE PROTOCOL</div>
+        <div style="font-size:1.1rem;color:#e2e8f0;font-weight:600;margin-bottom:24px;">4-7-8 Breathing Exercise</div>
+        <div id="circle-wrap" style="position:relative;width:180px;height:180px;margin:0 auto 24px auto;">
+            <div id="breathe-circle" style="width:180px;height:180px;border-radius:50%;background:radial-gradient(circle,#6366f140,#6366f110);border:3px solid #6366f1;display:flex;align-items:center;justify-content:center;transition:transform 4s ease-in-out, border-color 0.5s;transform:scale(0.6);">
+                <div>
+                    <div id="phase-text" style="font-size:1.4rem;font-weight:700;color:#e2e8f0;">Ready</div>
+                    <div id="count-text" style="font-size:2.5rem;font-weight:800;color:#6366f1;line-height:1;margin-top:4px;"></div>
+                </div>
+            </div>
+        </div>
+        <div id="cycle-info" style="font-size:0.85rem;color:#94a3b8;margin-bottom:16px;">3 cycles — press Start to begin</div>
+        <button id="start-btn" onclick="startBreathing()" style="background:linear-gradient(135deg,#4f46e5,#6366f1);color:white;border:none;padding:12px 36px;border-radius:10px;font-size:1rem;font-weight:600;cursor:pointer;letter-spacing:0.03em;">Start</button>
+    </div>
+    <script>
+    const phases = [
+        {name:"Inhale", duration:4, scale:1.0, color:"#6366f1"},
+        {name:"Hold", duration:7, scale:1.0, color:"#f59e0b"},
+        {name:"Exhale", duration:8, scale:0.6, color:"#10b981"}
+    ];
+    const totalCycles = 3;
+    let running = false;
+    function startBreathing() {
+        if (running) return;
+        running = true;
+        document.getElementById("start-btn").style.display = "none";
+        runCycle(0);
+    }
+    function runCycle(cycle) {
+        if (cycle >= totalCycles) {
+            document.getElementById("phase-text").textContent = "Complete";
+            document.getElementById("count-text").textContent = "\\u2713";
+            document.getElementById("breathe-circle").style.borderColor = "#10b981";
+            document.getElementById("breathe-circle").style.transform = "scale(0.8)";
+            document.getElementById("cycle-info").textContent = "Great work. Your nervous system is resetting.";
+            running = false;
+            return;
+        }
+        document.getElementById("cycle-info").textContent = "Cycle " + (cycle+1) + " of " + totalCycles;
+        runPhase(0, cycle);
+    }
+    function runPhase(pi, cycle) {
+        if (pi >= phases.length) { runCycle(cycle+1); return; }
+        const p = phases[pi];
+        const circle = document.getElementById("breathe-circle");
+        const phaseEl = document.getElementById("phase-text");
+        const countEl = document.getElementById("count-text");
+        phaseEl.textContent = p.name;
+        circle.style.borderColor = p.color;
+        circle.style.transition = "transform " + (p.name==="Hold"?"0.3":p.duration) + "s ease-in-out, border-color 0.5s";
+        circle.style.transform = "scale(" + p.scale + ")";
+        let sec = p.duration;
+        countEl.textContent = sec;
+        countEl.style.color = p.color;
+        const iv = setInterval(()=>{
+            sec--;
+            if(sec<=0){clearInterval(iv);runPhase(pi+1,cycle);}
+            else{countEl.textContent=sec;}
+        },1000);
+    }
+    </script>
+    """
+    components.html(breathing_html, height=420)
+
+@st.dialog("📅 Calendar Block", width="large")
+def show_calendar_dialog(emp, trigger_meeting, meetings):
+    trigger_end = time_to_minutes(trigger_meeting["end"])
+    next_meeting = None
+    for mt_next in meetings:
+        if time_to_minutes(mt_next["start"]) > trigger_end:
+            next_meeting = mt_next
+            break
+    block_start_str = f"{trigger_end // 60:02d}:{trigger_end % 60:02d}"
+    block_end_min = trigger_end + 15
+    block_end_str = f"{block_end_min // 60:02d}:{block_end_min % 60:02d}"
+
+    cal_placeholder = st.empty()
+    steps_text = [
+        "Connecting to Google Calendar...",
+        "Creating recovery block...",
+        f"Notifying attendees of {next_meeting['title'] if next_meeting else 'next meeting'} about 5-min late start...",
+        "Calendar updated.",
+    ]
+    for si, step_msg in enumerate(steps_text):
+        with cal_placeholder.container():
+            prev_html = "".join(
+                f'<div style="font-size:0.85rem;color:#64748b;padding:2px 0;">✓ {steps_text[k]}</div>'
+                for k in range(si)
+            )
+            st.markdown(f"""
+            <div style="background:#0f172a;border:1px solid #10b981;border-radius:12px;padding:20px 24px;">
+                <div style="font-size:0.7rem;color:#10b981;letter-spacing:0.12em;font-weight:700;margin-bottom:12px;">VEMO CALENDAR ACTION</div>
+                {prev_html}
+                <div style="font-size:0.85rem;color:#e2e8f0;padding:2px 0;">⏳ {step_msg}</div>
+            </div>
+            """, unsafe_allow_html=True)
+        time.sleep(0.6)
+
+    first_name = emp['name'].split()[0]
+    st.markdown(f"""
+    <div style="background:linear-gradient(135deg,#1e293b,#0f172a);border:2px solid #10b981;border-radius:16px;padding:24px 28px;margin-top:12px;">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px;">
+            <div style="width:12px;height:40px;border-radius:3px;background:#10b981;"></div>
+            <div>
+                <div style="font-size:1.1rem;font-weight:700;color:#e2e8f0;">Recovery Block — {first_name}</div>
+                <div style="font-size:0.8rem;color:#94a3b8;">Added by Vemo Wellbeing Agent</div>
+            </div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+            <div style="background:#0f172a;border-radius:8px;padding:12px;">
+                <div style="font-size:0.65rem;color:#64748b;text-transform:uppercase;">Time</div>
+                <div style="font-size:1rem;font-weight:600;color:#e2e8f0;">{block_start_str} – {block_end_str}</div>
+                <div style="font-size:0.75rem;color:#94a3b8;margin-top:2px;">15 minutes</div>
+            </div>
+            <div style="background:#0f172a;border-radius:8px;padding:12px;">
+                <div style="font-size:0.65rem;color:#64748b;text-transform:uppercase;">Before</div>
+                <div style="font-size:1rem;font-weight:600;color:#e2e8f0;">{next_meeting['title'] if next_meeting else 'End of day'}</div>
+                <div style="font-size:0.75rem;color:#f59e0b;margin-top:2px;">5-min late start sent</div>
+            </div>
+        </div>
+        <div style="margin-top:14px;padding:10px 14px;background:#10b98112;border-radius:8px;border:1px solid #10b98130;">
+            <div style="font-size:0.8rem;color:#10b981;font-weight:600;">Description</div>
+            <div style="font-size:0.8rem;color:#cbd5e1;margin-top:4px;line-height:1.5;">
+                Auto-scheduled recovery time after elevated stress detected in {trigger_meeting['title']}.
+                Suggested: step away from screen, hydrate, 2-min stretch, or use Vemo breathing exercise.
+            </div>
+        </div>
+        <div style="margin-top:12px;text-align:center;">
+            <span style="font-size:0.7rem;color:#10b981;font-weight:600;letter-spacing:0.1em;">✓ CALENDAR UPDATED</span>
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
+
+@st.dialog("🚶 Walking Break", width="large")
+def show_walking_dialog():
+    import streamlit.components.v1 as components
+    walking_html = """
+    <div style="text-align:center;padding:36px 20px;background:linear-gradient(135deg,#0c1222,#0f2a1a);border-radius:16px;border:1px solid #10b981;font-family:-apple-system,BlinkMacSystemFont,sans-serif;">
+        <div style="font-size:0.7rem;color:#10b981;letter-spacing:0.15em;font-weight:700;margin-bottom:6px;">RECOVERY COACH PROTOCOL</div>
+        <div style="font-size:1.1rem;color:#e2e8f0;font-weight:600;margin-bottom:20px;">10-Minute Walking Break</div>
+        <div style="font-size:4rem;margin-bottom:8px;">🚶</div>
+        <div id="walk-timer" style="font-size:3rem;font-weight:800;color:#10b981;letter-spacing:2px;margin-bottom:8px;">10:00</div>
+        <div id="walk-status" style="font-size:0.85rem;color:#94a3b8;margin-bottom:20px;">Step away from your screen. Walk, stretch, breathe.</div>
+        <div style="display:flex;justify-content:center;gap:20px;margin-bottom:20px;">
+            <div style="text-align:center;">
+                <div style="font-size:1.5rem;font-weight:700;color:#6366f1;" id="steps-count">0</div>
+                <div style="font-size:0.65rem;color:#64748b;">EST. STEPS</div>
+            </div>
+            <div style="text-align:center;">
+                <div style="font-size:1.5rem;font-weight:700;color:#f59e0b;" id="cal-count">0</div>
+                <div style="font-size:0.65rem;color:#64748b;">EST. CAL</div>
+            </div>
+            <div style="text-align:center;">
+                <div style="font-size:1.5rem;font-weight:700;color:#10b981;">+5</div>
+                <div style="font-size:0.65rem;color:#64748b;">HRV BOOST</div>
+            </div>
+        </div>
+        <div style="background:#1e293b;border-radius:8px;padding:10px 16px;max-width:340px;margin:0 auto;">
+            <div style="font-size:0.75rem;color:#f59e0b;font-weight:600;">Next meeting notified</div>
+            <div style="font-size:0.8rem;color:#94a3b8;">5-min late start notification sent</div>
+        </div>
+        <br/>
+        <button id="walk-btn" onclick="startWalk()" style="background:linear-gradient(135deg,#065f46,#10b981);color:white;border:none;padding:12px 36px;border-radius:10px;font-size:1rem;font-weight:600;cursor:pointer;">Start Timer</button>
+    </div>
+    <script>
+    let walkRunning = false;
+    function startWalk() {
+        if (walkRunning) return;
+        walkRunning = true;
+        document.getElementById("walk-btn").style.display = "none";
+        let total = 600;
+        const timerEl = document.getElementById("walk-timer");
+        const stepsEl = document.getElementById("steps-count");
+        const calEl = document.getElementById("cal-count");
+        const statusEl = document.getElementById("walk-status");
+        const iv = setInterval(()=>{
+            total--;
+            const m = Math.floor(total/60);
+            const s = total%60;
+            timerEl.textContent = m + ":" + (s<10?"0":"") + s;
+            const elapsed = 600 - total;
+            stepsEl.textContent = Math.floor(elapsed * 1.7);
+            calEl.textContent = Math.floor(elapsed * 0.08);
+            if(total<=0){
+                clearInterval(iv);
+                timerEl.textContent = "Done!";
+                timerEl.style.color = "#10b981";
+                statusEl.textContent = "Great break. Your recovery score is updating.";
+            }
+        }, 1000);
+    }
+    </script>
+    """
+    components.html(walking_html, height=440)
+
+# ---------------------------------------------------------------------------
 # Charts
 # ---------------------------------------------------------------------------
 def make_day_chart(hourly_data, meetings, pcolor, up_to_minutes=None, selected_meeting_idx=None, trigger_meeting_idx=None):
@@ -693,10 +895,11 @@ st.markdown("""
 # SESSION STATE
 # ===========================================================================
 defaults = {
-    "screen": "select", "employee": None, "selected_meeting": None,
+    "screen": "intro", "employee": None, "selected_meeting": None,
     "view_mode": "day", "playing": False, "play_minutes": 7 * 60,
     "triggered": False, "agent_done": False,
     "intervention_step": "alert", "voice_input": "",
+    "active_action": None, "intervention_response": "",
 }
 for k, v in defaults.items():
     if k not in st.session_state:
@@ -709,9 +912,187 @@ def go_to(screen):
     st.session_state.screen = screen
 
 # ===========================================================================
+# SCREEN 0: INTRO — TECH STACK & CLINICAL VALIDATION
+# ===========================================================================
+if st.session_state.screen == "intro":
+    st.markdown("""
+    <div style="text-align:center;padding:30px 0 10px 0;">
+        <div style="font-size:2.8rem;font-weight:800;color:#e2e8f0;letter-spacing:-1px;">🎙️ Vemo</div>
+        <div style="font-size:1.1rem;color:#94a3b8;margin-top:4px;">Workplace Wellbeing Intelligence for the Longevity Era</div>
+    </div>
+    """, unsafe_allow_html=True)
+
+    # --- 5 Pillars of Longevity ---
+    st.markdown("""
+    <div style="background:linear-gradient(135deg,#0f172a,#1a1a2e);border:1px solid #6366f1;border-radius:16px;padding:24px 28px;margin:16px 0;">
+        <div style="text-align:center;margin-bottom:16px;">
+            <div style="font-size:0.7rem;color:#6366f1;letter-spacing:0.15em;font-weight:700;">THE FIVE PILLARS OF LONGEVITY</div>
+            <div style="font-size:0.85rem;color:#94a3b8;margin-top:4px;">Work is where these pillars silently collapse. Vemo protects them.</div>
+        </div>
+        <div style="display:flex;justify-content:center;gap:16px;flex-wrap:wrap;">
+            <div style="text-align:center;background:#1e293b;border-radius:12px;padding:16px 14px;min-width:120px;border:1px solid #334155;">
+                <div style="font-size:1.8rem;">😴</div>
+                <div style="font-size:0.85rem;font-weight:700;color:#6366f1;margin:4px 0;">Sleep</div>
+                <div style="font-size:0.7rem;color:#94a3b8;line-height:1.4;">Work stress is the #1 driver of poor sleep quality</div>
+            </div>
+            <div style="text-align:center;background:#1e293b;border-radius:12px;padding:16px 14px;min-width:120px;border:1px solid #334155;">
+                <div style="font-size:1.8rem;">🧘</div>
+                <div style="font-size:0.85rem;font-weight:700;color:#ef4444;margin:4px 0;">Stress</div>
+                <div style="font-size:0.7rem;color:#94a3b8;line-height:1.4;">Chronic cortisol from back-to-back meetings drives inflammation</div>
+            </div>
+            <div style="text-align:center;background:#1e293b;border-radius:12px;padding:16px 14px;min-width:120px;border:1px solid #334155;">
+                <div style="font-size:1.8rem;">🏃</div>
+                <div style="font-size:0.85rem;font-weight:700;color:#10b981;margin:4px 0;">Exercise</div>
+                <div style="font-size:0.7rem;color:#94a3b8;line-height:1.4;">Meeting overload eliminates movement from the day</div>
+            </div>
+            <div style="text-align:center;background:#1e293b;border-radius:12px;padding:16px 14px;min-width:120px;border:1px solid #334155;">
+                <div style="font-size:1.8rem;">🥗</div>
+                <div style="font-size:0.85rem;font-weight:700;color:#f59e0b;margin:4px 0;">Nutrition</div>
+                <div style="font-size:0.7rem;color:#94a3b8;line-height:1.4;">Stressed workers skip meals or stress-eat through the day</div>
+            </div>
+            <div style="text-align:center;background:#1e293b;border-radius:12px;padding:16px 14px;min-width:120px;border:1px solid #334155;">
+                <div style="font-size:1.8rem;">🤝</div>
+                <div style="font-size:0.85rem;font-weight:700;color:#ec4899;margin:4px 0;">Connection</div>
+                <div style="font-size:0.7rem;color:#94a3b8;line-height:1.4;">7 calls/day yet more isolated than ever — digital loneliness</div>
+            </div>
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
+
+    # --- Problem ---
+    st.markdown("""
+    <div style="background:linear-gradient(135deg,#451a0310,#0f172a);border:1px solid #ef4444;border-radius:16px;padding:22px 28px;margin:12px 0;">
+        <div style="font-size:0.7rem;color:#ef4444;letter-spacing:0.12em;font-weight:700;margin-bottom:8px;">THE SILENT CRISIS</div>
+        <div style="display:flex;gap:24px;flex-wrap:wrap;">
+            <div style="flex:1;min-width:200px;">
+                <div style="font-size:2.2rem;font-weight:800;color:#ef4444;">76%</div>
+                <div style="font-size:0.8rem;color:#cbd5e1;">of workers report at least one symptom of a mental health condition</div>
+            </div>
+            <div style="flex:1;min-width:200px;">
+                <div style="font-size:2.2rem;font-weight:800;color:#f59e0b;">6.5h</div>
+                <div style="font-size:0.8rem;color:#cbd5e1;">average daily screen time on video calls for remote workers post-COVID</div>
+            </div>
+            <div style="flex:1;min-width:200px;">
+                <div style="font-size:2.2rem;font-weight:800;color:#6366f1;">67%</div>
+                <div style="font-size:0.8rem;color:#cbd5e1;">of burnout cases go undetected — these are the silent sufferers</div>
+            </div>
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
+
+    # --- How it works ---
+    st.markdown("""
+    <div style="background:linear-gradient(135deg,#064e3b10,#0f172a);border:1px solid #10b981;border-radius:16px;padding:22px 28px;margin:12px 0;">
+        <div style="font-size:0.7rem;color:#10b981;letter-spacing:0.12em;font-weight:700;margin-bottom:10px;">HOW VEMO WORKS</div>
+        <div style="display:flex;gap:12px;flex-wrap:wrap;">
+            <div style="flex:1;min-width:150px;background:#1e293b;border-radius:10px;padding:14px;text-align:center;">
+                <div style="font-size:1.5rem;">📅</div>
+                <div style="font-size:0.8rem;font-weight:600;color:#e2e8f0;margin:4px 0;">Connects</div>
+                <div style="font-size:0.7rem;color:#94a3b8;">Syncs with your calendar. Silent. Passive. Always on.</div>
+            </div>
+            <div style="flex:1;min-width:150px;background:#1e293b;border-radius:10px;padding:14px;text-align:center;">
+                <div style="font-size:1.5rem;">🎙️</div>
+                <div style="font-size:0.8rem;font-weight:600;color:#e2e8f0;margin:4px 0;">Listens</div>
+                <div style="font-size:0.7rem;color:#94a3b8;">Records every call. Analyzes voice as a vital sign.</div>
+            </div>
+            <div style="flex:1;min-width:150px;background:#1e293b;border-radius:10px;padding:14px;text-align:center;">
+                <div style="font-size:1.5rem;">🧠</div>
+                <div style="font-size:0.8rem;font-weight:600;color:#e2e8f0;margin:4px 0;">Detects</div>
+                <div style="font-size:0.7rem;color:#94a3b8;">Acoustic models score emotion, depression, anxiety.</div>
+            </div>
+            <div style="flex:1;min-width:150px;background:#1e293b;border-radius:10px;padding:14px;text-align:center;">
+                <div style="font-size:1.5rem;">⚡</div>
+                <div style="font-size:0.8rem;font-weight:600;color:#e2e8f0;margin:4px 0;">Intervenes</div>
+                <div style="font-size:0.7rem;color:#94a3b8;">Real-time agentic AI takes action when it matters.</div>
+            </div>
+            <div style="flex:1;min-width:150px;background:#1e293b;border-radius:10px;padding:14px;text-align:center;">
+                <div style="font-size:1.5rem;">📊</div>
+                <div style="font-size:0.8rem;font-weight:600;color:#e2e8f0;margin:4px 0;">Tracks</div>
+                <div style="font-size:0.7rem;color:#94a3b8;">Daily, weekly, monthly reports across all 5 pillars.</div>
+            </div>
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
+
+    # --- Tech + Skills in two columns ---
+    col_left, col_right = st.columns(2, gap="large")
+
+    with col_left:
+        st.markdown("""
+        <div style="background:#1e293b;border-radius:12px;padding:18px 22px;border:1px solid #334155;">
+            <div style="font-size:0.7rem;color:#6366f1;letter-spacing:0.1em;font-weight:700;margin-bottom:10px;">VOICE ACOUSTIC MODELS</div>
+            <div style="margin-bottom:12px;">
+                <div style="font-size:0.9rem;font-weight:700;color:#e2e8f0;">emotion2vec+ large</div>
+                <div style="font-size:0.75rem;color:#94a3b8;line-height:1.5;">9-class speech emotion recognition. Audio → spectrograms → emotion classification. Trained on 40,000+ hours.</div>
+            </div>
+            <div style="margin-bottom:12px;">
+                <div style="font-size:0.9rem;font-weight:700;color:#e2e8f0;">Kintsugi DAM 3.1</div>
+                <div style="font-size:0.75rem;color:#94a3b8;line-height:1.5;">Clinically validated voice biomarker analysis. Correlates with <strong style="color:#cbd5e1;">PHQ-9</strong> (depression) and <strong style="color:#cbd5e1;">GAD-7</strong> (anxiety). FDA Breakthrough Device Designation. 30-second voice sample → clinical-grade scores.</div>
+            </div>
+            <div>
+                <div style="font-size:0.9rem;font-weight:700;color:#e2e8f0;">Whoop Biometrics</div>
+                <div style="font-size:0.75rem;color:#94a3b8;line-height:1.5;">HR, HRV, respiratory rate, recovery, sleep. Cross-referenced with voice biomarkers for multi-modal validation.</div>
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
+
+        st.markdown("")
+
+        st.markdown("""
+        <div style="background:#1e293b;border-radius:12px;padding:18px 22px;border:1px solid #334155;">
+            <div style="font-size:0.7rem;color:#10b981;letter-spacing:0.1em;font-weight:700;margin-bottom:8px;">AGENTIC AI</div>
+            <div style="font-size:0.75rem;color:#94a3b8;line-height:1.6;">
+                Powered by <strong style="color:#cbd5e1;">Claude Opus</strong>. Streams real-time interventions with full biometric + voice context. Takes action — blocks calendars, starts breathing exercises, adjusts strain targets. References skill protocols by name with personalized data.
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
+
+    with col_right:
+        st.markdown("""
+        <div style="background:#1e293b;border-radius:12px;padding:18px 22px;border:1px solid #334155;">
+            <div style="font-size:0.7rem;color:#10b981;letter-spacing:0.1em;font-weight:700;margin-bottom:10px;">BETTERNESS SKILLS — 7 LONGEVITY PROTOCOLS</div>
+            <div style="display:flex;flex-direction:column;gap:8px;">
+                <div style="display:flex;align-items:center;gap:10px;">
+                    <span style="font-size:1.2rem;">🧘</span>
+                    <div><span style="font-size:0.85rem;font-weight:600;color:#e2e8f0;">Stress Resilience</span><br/><span style="font-size:0.7rem;color:#94a3b8;">Breathing protocols, nervous system regulation</span></div>
+                </div>
+                <div style="display:flex;align-items:center;gap:10px;">
+                    <span style="font-size:1.2rem;">💚</span>
+                    <div><span style="font-size:0.85rem;font-weight:600;color:#e2e8f0;">Recovery Coach</span><br/><span style="font-size:0.7rem;color:#94a3b8;">Strain management, workload balancing</span></div>
+                </div>
+                <div style="display:flex;align-items:center;gap:10px;">
+                    <span style="font-size:1.2rem;">😴</span>
+                    <div><span style="font-size:0.85rem;font-weight:600;color:#e2e8f0;">Sleep Analyst</span><br/><span style="font-size:0.7rem;color:#94a3b8;">Sleep debt tracking, circadian rhythm support</span></div>
+                </div>
+                <div style="display:flex;align-items:center;gap:10px;">
+                    <span style="font-size:1.2rem;">❤️</span>
+                    <div><span style="font-size:0.85rem;font-weight:600;color:#e2e8f0;">Heart Health Scorecard</span><br/><span style="font-size:0.7rem;color:#94a3b8;">HR/HRV analysis, cardiovascular strain alerts</span></div>
+                </div>
+                <div style="display:flex;align-items:center;gap:10px;">
+                    <span style="font-size:1.2rem;">🔬</span>
+                    <div><span style="font-size:0.85rem;font-weight:600;color:#e2e8f0;">Inflammation Tracker</span><br/><span style="font-size:0.7rem;color:#94a3b8;">Chronic stress markers, anti-inflammatory interventions</span></div>
+                </div>
+                <div style="display:flex;align-items:center;gap:10px;">
+                    <span style="font-size:1.2rem;">🧬</span>
+                    <div><span style="font-size:0.85rem;font-weight:600;color:#e2e8f0;">Longevity Protocol</span><br/><span style="font-size:0.7rem;color:#94a3b8;">Multi-pillar intervention for severe cases</span></div>
+                </div>
+                <div style="display:flex;align-items:center;gap:10px;">
+                    <span style="font-size:1.2rem;">🌅</span>
+                    <div><span style="font-size:0.85rem;font-weight:600;color:#e2e8f0;">Morning Briefing</span><br/><span style="font-size:0.7rem;color:#94a3b8;">Proactive daily planning from recovery + sleep data</span></div>
+                </div>
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
+
+    st.markdown("")
+    if st.button("Enter Vemo →", type="primary", use_container_width=True):
+        go_to("select")
+        st.rerun()
+
+# ===========================================================================
 # SCREEN 1: EMPLOYEE SELECTION
 # ===========================================================================
-if st.session_state.screen == "select":
+elif st.session_state.screen == "select":
     st.markdown('<div class="screen-header">', unsafe_allow_html=True)
     st.markdown("# 🎙️ Vemo")
     st.markdown("**Workplace Wellbeing Intelligence**")
@@ -758,6 +1139,9 @@ if st.session_state.screen == "select":
                     st.session_state.agent_done = False
                     st.session_state.intervention_step = "alert"
                     st.session_state.voice_input = ""
+                    st.session_state.active_action = None
+                    st.session_state.intervention_response = ""
+                    st.session_state.view_mode = "trends"
                     go_to("day")
                     st.rerun()
         st.markdown("")
@@ -789,6 +1173,12 @@ elif st.session_state.screen == "day":
     with col_back:
         if st.button("← Back"):
             st.session_state.playing = False
+            st.session_state.triggered = False
+            st.session_state.agent_done = False
+            st.session_state.intervention_step = "alert"
+            st.session_state.voice_input = ""
+            st.session_state.active_action = None
+            st.session_state.intervention_response = ""
             go_to("select")
             st.rerun()
 
@@ -1148,32 +1538,36 @@ elif st.session_state.screen == "day":
                     f"### {SKILL_LABELS.get(s, s)}\n{all_skills.get(s, '')}" for s in selected_skills
                 )
 
-                # Stream agent response
+                # Stream agent response (cache to avoid re-streaming on rerun)
                 st.markdown("---")
                 st.markdown('<div class="vemo-active" style="margin-bottom:12px;"><span class="vemo-dot"></span> VEMO INTERVENING</div>', unsafe_allow_html=True)
 
                 api_key = os.environ.get("ANTHROPIC_AUTH_TOKEN") or os.environ.get("ANTHROPIC_API_KEY")
                 if api_key:
-                    system_prompt = build_intervention_prompt(emp, tm, emotions, clinical, snap, "", skills_text)
                     response_placeholder = st.empty()
-                    full_response = ""
-                    for chunk in stream_agent_response(system_prompt, f"You just analyzed a live voice sample from {emp['name'].split()[0]}. Based on the voice biomarkers, clinical screening, and biometrics, intervene now using your skill protocols.", max_tokens=800):
-                        full_response += chunk
-                        response_placeholder.markdown(f'<div class="agent-card">\n\n{full_response}\n\n</div>', unsafe_allow_html=True)
+                    if "intervention_response" not in st.session_state or not st.session_state.intervention_response:
+                        system_prompt = build_intervention_prompt(emp, tm, emotions, clinical, snap, "", skills_text)
+                        full_response = ""
+                        for chunk in stream_agent_response(system_prompt, f"You just analyzed a live voice sample from {emp['name'].split()[0]}. Based on the voice biomarkers, clinical screening, and biometrics, intervene now using your skill protocols.", max_tokens=800):
+                            full_response += chunk
+                            response_placeholder.markdown(f'<div class="agent-card">\n\n{full_response}\n\n</div>', unsafe_allow_html=True)
+                        st.session_state.intervention_response = full_response
+                    else:
+                        response_placeholder.markdown(f'<div class="agent-card">\n\n{st.session_state.intervention_response}\n\n</div>', unsafe_allow_html=True)
 
-                    # Action buttons
+                    # Action buttons — open dialogs (no rerun needed)
                     st.markdown("")
                     st.markdown("### Quick Actions")
                     a1, a2, a3, a4 = st.columns(4)
                     with a1:
                         if st.button("🧘 Start Breathing", use_container_width=True, type="primary"):
-                            st.toast("4-7-8 breathing protocol started. Follow the rhythm.", icon="🧘")
+                            show_breathing_dialog()
                     with a2:
                         if st.button("📅 Block Calendar", use_container_width=True):
-                            st.toast("15-min recovery block added before your next meeting.", icon="📅")
+                            show_calendar_dialog(emp, tm, meetings)
                     with a3:
                         if st.button("🚶 Walking Break", use_container_width=True):
-                            st.toast("10-min walking break scheduled. Your next meeting will get a 5-min late start notification.", icon="🚶")
+                            show_walking_dialog()
                     with a4:
                         if st.button("📊 Full Analysis", use_container_width=True):
                             st.session_state.selected_meeting = trigger_idx
@@ -1184,7 +1578,36 @@ elif st.session_state.screen == "day":
                     st.session_state.agent_done = True
 
         elif st.session_state.triggered and st.session_state.agent_done:
-            # Already triggered and handled — show summary nav
+            # Already triggered and handled — show cached response + actions
+            tm = meetings[trigger_idx]
+            emotions = get_meeting_emotions(emp_key, trigger_idx)
+            clinical = get_meeting_clinical(emp_key, trigger_idx)
+            mid_min = (time_to_minutes(tm["start"]) + time_to_minutes(tm["end"])) // 2
+            snap = min(hourly_data, key=lambda d: abs(d["minutes_from_midnight"] - mid_min))
+
+            st.markdown("---")
+            if st.session_state.intervention_response:
+                st.markdown('<div class="vemo-active" style="margin-bottom:12px;"><span class="vemo-dot"></span> VEMO INTERVENING</div>', unsafe_allow_html=True)
+                st.markdown(f'<div class="agent-card">\n\n{st.session_state.intervention_response}\n\n</div>', unsafe_allow_html=True)
+
+                st.markdown("")
+                st.markdown("### Quick Actions")
+                a1, a2, a3, a4 = st.columns(4)
+                with a1:
+                    if st.button("🧘 Start Breathing", use_container_width=True, type="primary"):
+                        show_breathing_dialog()
+                with a2:
+                    if st.button("📅 Block Calendar", use_container_width=True):
+                        show_calendar_dialog(emp, tm, meetings)
+                with a3:
+                    if st.button("🚶 Walking Break", use_container_width=True):
+                        show_walking_dialog()
+                with a4:
+                    if st.button("📊 Full Analysis", use_container_width=True):
+                        st.session_state.selected_meeting = trigger_idx
+                        go_to("meeting")
+                        st.rerun()
+
             st.markdown("---")
             c1, c2 = st.columns(2)
             with c1:
@@ -1199,6 +1622,8 @@ elif st.session_state.screen == "day":
                     st.session_state.agent_done = False
                     st.session_state.intervention_step = "alert"
                     st.session_state.voice_input = ""
+                    st.session_state.active_action = None
+                    st.session_state.intervention_response = ""
                     st.rerun()
 
         # Auto-play tick
